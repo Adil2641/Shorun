@@ -1,30 +1,87 @@
-var http = require("http");
-var port = 5353;
+const http = require("http");
+const fs = require("fs");
+const port = 5353;
 
-var server = http.createServer(function (req, res) {
-    var Shorun = ["Saoda", "Rida", "Sabiha", "Sumaiya", "Elma","Rika","Mitsuri"];
-    var RandomName = Shorun[Math.floor(Math.random() * Shorun.length)];
+const server = http.createServer(function (req, res) {
+    if (req.url==="/elma.jpg") {
+        fs.readFile("elma.jpg", (err, data) => {
+            if (err) {
+                res.writeHead(404);
+                res.end("Elma image not found 😥");
+            }
+            res.writeHead(200, {"Content-Type":"image/jpg"});
+            res.end(data);
+        }); 
+        return
+    }
+    if (req.url === "/rida2.jpg") {
+        fs.readFile("rida2.jpg", (err, data) => {
+            if (err) {
+                res.writeHead(404);
+                res.end("Rida2 image not found 😥");
+            }
+            res.writeHead(200, {"Content-Type": "image/jpg"});
+            res.end(data);
+        });
+        return
+    }
+    if (req.url==="/rida.mp4") {
+        fs.readFile("rida.mp4", (err, data) => {
+            if (err) {
+                res.writeHead(404);
+                res.end("Rida video not found 😥");
+            }
+            res.writeHead(200, {"Content-Type": "video/mp4"});
+            res.end(data);
+        });
+        return
+    }
 
+    if (req.url==="/"){
+    const Shorun = ["Saoda", "Rida", "Sabiha", "Sumaiya", "Elma","Rika","Mitsuri"];
+    const RandomName = Shorun[Math.floor(Math.random() * Shorun.length)];
+    let contentType = "";
+    let contentPlay = "";
+
+    if (RandomName==="Rida") {
+        const isVideo = Math.random() < 0.5;
+        contentType = isVideo? "video" : "photo";
+        if (isVideo) {
+            contentPlay = `
+        <video style="display:block; margin:auto;" 
+        controls>
+        <source src="rida.mp4" type="video/mp4">
+       </video>`;
+    }
+        else {
+    
+    contentPlay = `<img src="rida2.jpg" style="display:block; margin:auto;">`;
+}
+    }
+    else if (RandomName==="Elma") {
+        contentType = "photo";
+        contentPlay = `<img src="/elma.jpg" style="display:block; margin:auto;">`;
+    }
     res.writeHead(200,{"Content-Type":"text/html"});
     res.write(`<!DOCTYPE html>
         <html lang="en">
         <head>
+        <meta charset="UTF-8">
         <title>Shorun's Bou</title>
         </head>
-        <body style= "#87e3ff">
-
-        <h1 style="background-color:#87e3ff; 
-        font-family:courier; 
-        text-align:center;
-        font-size:50px;
-        ">Shorun er bou er Name : ${RandomName}</h1>
-        <p style="background-color:#87e3ff;
-        font-family:courier;">Click the photo</p>
-        <a href="https://www.facebook.com/kyojuro.rengoku.574779" taget="_blank" style="color:Red">  <img src="https://scontent-sin6-2.xx.fbcdn.net/v/t39.30808-6/492880114_570989816026114_4100233029826738315_n.jpg?_nc_cat=109&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeFvjItVMpCCMEucVcIBoSCmAqhJqC59BBECqEmoLn0EEeL1T1iuhInEgPoEUSkGRY-jIEMPA4V3bv5NqQrqC3SN&_nc_ohc=rD_P9ovrvhAQ7kNvwEtkfT-&_nc_oc=AdneKwquEs240Y_vxme7CBr8v8Fnrh0EkDXI4DPwDgg3WFVAxam03GGSrhJvEsneiZ962Qavd9xSetFTS1RmmqE1&_nc_zt=23&_nc_ht=scontent-sin6-2.xx&_nc_gid=GdtRZruvBo-__4iAL2aJ3A&oh=00_AfLk_zvWyu8u_vvYmlCMRXUuZjEgJjADgXETfzCAYZ76rQ&oe=68375C4B" style="float:left; width:500px;height:600px;" alt="shorun"></a>
+        <body style="height:100vh; background: linear-gradient(45deg, #F52787, #2787F5, #27EEF5);">
+        <button style="padding: 10px 20px; border-radius: 10px; background: linear-gradient(180deg, #FF008C, #00FF73);"onclick="location.reload()">Reload</button>
+        <h1 style="font-family: Cursive;
+    text-align: center;
+    font-size: 50px;
+    color: #FF69B5;">
+    ❥Shorun⸜(｡˃ ᵕ ˂)⸝♡ જ⁀➴ ♡🧸ྀི${RandomName}˚ʚ♡ɞ˚</h1>
+        ${contentPlay}
         </body>
         </html>
         `);
     res.end();
+    }
 
 });
 
